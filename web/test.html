@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Petite erreur: {{ status_text }}</title>
+    <link rel="stylesheet" href="{{ asset('css/main-bootstraps.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('css/main_extra.css') }}" type="text/css" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+
+        #main {
+            position: absolute;
+            top: 0px;
+            bottom: 200px;
+            width: 100%;
+            background-color: #f3643c;
+            color: #fff;
+            text-align: center;
+        }
+
+        #links {
+            color: #000;
+            position: absolute;
+            bottom: 150px;
+            right: 20%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="wrapper" id="main">
+        <h1>OUPS! Problème !</h1>
+        <h2>Plus précisement : {{ status_code }} {{ status_text }}</h2>
+
+        <div>
+            Vous pouvez toujours revenir à la page d'accueil.
+        </div>  
+
+    </div>
+
+    <div id="links">
+            <a href="#">Home</a>
+            <a href="#">Picks</a>
+            <a href="#">Leagues</a>
+        </div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <section class="container">
+        <div class="row">
+            <h1 class="col-xs-12"> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Mon profil</h1>
+
+                
+                <ul class="col-md-7 list-group">
+                    <li class="list-group-item">{{ 'profile.show.username'|trans }}: {{ user.username }}</li>
+                    <li class="list-group-item">{{ 'profile.show.email'|trans }}: {{ user.email }}</li>
+                    <li class="list-group-item">Nationalité: {{ user.country.name }}</li>
+                    <li class="list-group-item">Equipe favorite: {{ user.favoriteTeam.name }}</li>
+                </ul>
+                
+                <ul class="col-md-4 col-md-offset-1 list-group text-right">
+                    <li class="list-group-item"><a href="{{ path('fos_user_profile_edit') }}">Modifier son compte</a> <span class="glyphicon glyphicon-user" aria-hidden="true"></span></li>
+                    <li class="list-group-item"><a href="{{ path('fos_user_change_password') }}">Changer son password</a> <span class="glyphicon glyphicon-cog" aria-hidden="true"></span></li>
+                </ul>
+
+        </div>
+    </section>
+
+{% endblock %}

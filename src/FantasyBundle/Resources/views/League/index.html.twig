@@ -1,0 +1,152 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+	<section class="container ligues">
+		<div class="row">
+			<div class="col-md-12">
+				{% if myleagues is not null %}
+					<h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Mes ligues</h1>
+					<table class="table table-striped">
+			            <tbody>
+
+			                {% for myleague in myleagues %}
+			                    <tr>
+			                        <td>{{ myleague.name }}</td>
+			                        <td>{{ myleague.users|length }} membres</td>
+			                        <td></td>
+			                        <td class="text-right"><a href="{{ path('fantasy_league_detail', {'id': myleague.id, 'slug': myleague.slug}) }}">Voire détail</a></td>
+			                    </tr>
+			                {% else %}
+			                	<tr>
+			                        <td colspan="4">Rien, nada. Pas de league !</td>
+			                    </tr>
+			                {% endfor %}
+
+			               		<tr>
+			                        <td colspan="4"> <a href="{{ path('fantasy_league_add') }}"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Crée une nouvelle ligue</a></td>
+			                    </tr>
+
+			            </tbody>
+			        </table>
+				{% endif %}
+
+				<h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Toutes les ligues</h1>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Ligue</th>
+							<th class="text-center">Propriétaire</th>
+							<th class="text-center">Membres</th>
+							<th></th>
+						</tr>
+					</thead>
+		            <tbody>
+
+		                {% for league in leagues %}
+		                    <tr>
+		                        <td>{% if league.private == 1 %}<i class="fa fa-lock" aria-hidden="true"></i> {% endif %}{{ league.name }}</td>
+		                        <td class="text-center">{{ league.owner.username }}</td>
+		                        <td class="text-center">{{ league.users|length }}</td>
+		                        <td class="text-right">
+		                        	<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#joinLeague"
+		                        	 data-league="{{ league.name }}" data-private="{{ league.private }}" data-id="{{ league.id }}">
+		                        		Rejoindre
+		                        	</button>
+		                        </td>
+		                    </tr>
+		                {% endfor %}
+
+		            </tbody>
+		        </table>
+
+				    {# pagination #}
+                    {% if nbPages != 1 %}
+                        <div class="row">
+                            <div class="col-xs-12 text-center">
+                                <ul class="pagination">
+                                    <li{% if page == 1 %} class="disabled" {% endif %}>
+                                        <a href="{{ path('fantasy_leagues', {'page': page-1}) }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    {% for p in range(1, nbPages) %}
+                                        <li{% if p == page %} class="active"{% endif %}>
+                                            <a href="{{ path('fantasy_leagues', {'page': p}) }}">{{ p }}</a>
+                                        </li>
+                                    {% endfor %}
+
+                                    <li{% if page == nbPages %} class="disabled" {% endif %}>
+                                        <a href="{{ path('fantasy_leagues', {'page': page+1}) }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {# /pagination #}
+
+			</div>
+
+		</div>
+	</section>
+
+	{# MODAL JOIN LEAGUE (BOOTSTRAP) #}
+	<div class="modal fade" id="joinLeague" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title"></h4>
+				</div>
+				{{ form_start(form) }}
+				<div class="modal-body">
+					 
+						<div class="form-group" id="leagueid">
+							
+						</div>
+						<div class="form-group" id="leaguepwd">
+						</div>
+					
+				</div>
+				<div class="modal-footer text-center">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+					{{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}, 'label':'rejoindre'}) }}
+				</div>
+				{% do form.password.setRendered %} 
+				{% do form.id.setRendered %} 
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+	{# /MODAL JOIN LEAGUE (BOOTSTRAP) #}
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+	$(document).ready(function() {
+
+		$('#joinLeague').on('shown.bs.modal', function (event) {
+			var button = $(event.relatedTarget);
+			var lname = button.data('league');
+			var lprivate = button.data('private');
+			var lid = button.data('id');
+
+			$('#joinLeague .modal-title').text('Rejoindre la ligue : '+lname);
+			$('#joinLeague #leagueid').html('<input type="hidden" id="formLeague_id" name="formLeague[id]" value="'+lid+'" />');
+
+			
+			if( lprivate == 1) {
+				$('#joinLeague #leaguepwd').html('<label for="formLeague_password" class="required">Un password est requis pour rejoindre la ligue : '+lname+'</label><input type="password" class="form-control" id="formLeague_password" name="formLeague[password]" required="required" />');
+			}
+			else
+				$('#joinLeague #leaguepwd').html('');
+		})
+
+	});
+
+</script>
+{% endblock %}

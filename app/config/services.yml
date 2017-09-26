@@ -1,0 +1,18 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    core_logs:
+        class: CoreBundle\Dblog\Dblog
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    app.form.profile.edit:
+        class: UserBundle\Form\ProfileFormType
+        tags:
+            - { name: form.type, alias: app_user_profile_edit }

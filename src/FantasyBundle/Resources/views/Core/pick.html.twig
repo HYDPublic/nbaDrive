@@ -1,0 +1,148 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+<section class="container gamepicks">
+    <div class="row">
+        {% for game in games %}
+            <div class="col-xs-3 text-center">
+                <img class="clicklogo" src="{{ asset('pics/teams/'~game.teamExt.logo) }}" alt="{{ game.teamExt.shortname }}"> 
+                @ <img class="clicklogo" src="{{ asset('pics/teams/'~game.teamDom.logo) }}" alt="{{ game.teamDom.shortname }}">
+                <ul class="list-unstyled text-left">
+                    <li><span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span> {{ game.teamExt.name }}</li>
+                    <li><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> @ {{ game.teamDom.name }}</li>
+                    <li><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <em class="zetime">{{ game.date.date|date('d M Y, H:i') }}</em> ET</li>
+                    <li><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <em class="zetimeUrTimezone"></em></li>
+                </ul>
+            </div>
+        {% endfor %}
+        
+    </div>
+</section>
+
+<!-- MES PICKS -->
+<section class="container mypicks">
+    <h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Selection joueur <small>choix bloqué dans <span id="zeCountdown"></span></small></h1>
+    <div class="row">
+        <table class="table table-striped">
+            
+            <thead>
+                <tr id="currentpick" data-id="{% if mypicks.current is defined %}{{ mypicks.current }}{% endif %}" data-filter="all">
+                    <th>Equipe</th>
+                    <th>Joueur</th>
+                    <th class="text-center">Games</th>
+                    <th class="text-center"><abbr title="Minutes Per Game">MPG</abbr></th>
+                    <th class="text-center"><abbr title="Points Per Game">PPG</abbr></th>
+                    <th class="text-center"><abbr title="Rebonds Per Game">RPG</abbr></th>
+                    <th class="text-center"><abbr title="Assists Per Game">APG</abbr></th>
+                    <th></th>
+                </tr>
+            </thead>    
+        
+            <tbody>
+            {% for player in players %}
+                <tr id="player_{{ player.id }}" class="zt team_{{ player.team.shortname }}">
+                    <td>{{ player.team.name }}</td>
+                    <td>{{ player.name }}</td>
+                    <td class="text-center">{{ player.seasonStats.games }}</td>
+                    <td class="text-center">{{ player.seasonStats.minutes }}</td>
+                    <td class="text-center">{{ player.seasonStats.points }}</td>
+                    <td class="text-center">{{ player.seasonStats.rebonds }}</td>
+                    <td class="text-center">{{ player.seasonStats.assists }}</td>
+
+                    <td class="text-right"><a href="{{ path('fantasy_core_selectpick', {'day': day ,'id': player.id}) }}" class="btn btn-primary btn-sm">Pick</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</section>
+<!-- /MES PICKS -->
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+
+        function giveAzero(num)
+        {
+            if(num < 10)
+                return '0'+num;
+            return num;
+        }
+
+        $(function () {
+            // On recupere le choix déjà fait pour cette journée.
+            var current = $('#currentpick').data('id');
+            $('#player_'+current + ' td').addClass('text-primary');
+            $('#player_'+current + ' td a.btn').parent().html('<< Current choice');
+
+            // Filtre les joueurs en fonction de l'équipe choisie
+            $('.clicklogo').on('click', function(){
+                var team = $(this).attr('alt');
+                var filter = $('#currentpick').data('filter');
+                $('.zt').fadeOut();
+                if(filter == team){
+                    $('.zt').fadeIn();
+                    $('#currentpick').data('filter', 'all');
+                }
+                else{
+                    $('.team_'+team).fadeIn();
+                    $('#currentpick').data('filter', team);
+                }
+            });
+
+            // travail sur les dates
+ {#            var dateNow = new Date();
+    
+            var dateNext = new Date( $('.zetime').text() );
+            // On bloque le choix 10minutes avant le debut d'un match
+            var diff = Math.floor( (dateNext-dateNow)/1000 - 10*60);
+#}   
+            var txtdiff, dateNext, diff_tmp;
+            var diff=0;
+            $('.zetime').each(function(){
+                dateNext = new Date( $(this).text() + ' GMT-0400');
+                dateNow = new Date();
+                diff_tmp = Math.floor( (dateNext-dateNow)/1000);
+                formatdate = dateNext.getDate()+'/'+giveAzero(dateNext.getMonth()+1)+'/'+dateNext.getFullYear()+' '+giveAzero(dateNext.getHours())+':'+giveAzero(dateNext.getMinutes());
+                var ele = $(this).parent().parent().find('.zetimeUrTimezone').text('GMT+1 : '+ formatdate);
+
+                console.log(dateNext);
+                console.log(dateNow);
+                console.log(diff_tmp);
+                if( diff_tmp < diff || diff == 0)
+                    diff = diff_tmp;
+            });
+            console.log('DIFF = ' + diff);
+                intervalHandle = setInterval(function(){
+                
+                diff--;
+                if( diff > 24*3600 ) {
+                    txtdiff = 'plus de 24heures';
+                    // Peut être a enlever
+                    clearInterval(intervalHandle); 
+                }
+                else if( diff < 0 ) {
+                    txtdiff = 'terminé';
+                    clearInterval(intervalHandle);
+                    $('table tbody tr td a.btn').remove();
+                }
+                else {
+                    var heures = Math.floor(diff/3600);
+                    var minutes = Math.floor((diff - (heures*3600)) / 60);
+                    var duree = heures*3600 + minutes*60;
+                    var secondes = Math.floor(diff - duree);
+
+                    if(minutes < 10) { minutes = '0'+minutes }
+                    if(secondes < 10) { secondes = '0'+secondes }
+
+                    txtdiff = heures+':'+minutes+':'+secondes;
+                }
+                $('#zeCountdown').html(txtdiff);
+            }, 1000);
+
+        });
+    </script>
+{% endblock %}

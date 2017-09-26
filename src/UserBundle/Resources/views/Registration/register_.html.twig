@@ -1,0 +1,20 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <div class="col-xs-10 col-xs-offset-1">
+        
+        <h4 class="confs text-center text-uppercase confs-underline"><span>Register</span></h4>
+        {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+           
+            {{ form_widget(form) }}
+
+            <div class="container-fluid text-center">
+                <input class="btn btn-primary" type="submit"  value="submit" />
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <section class="container">
+        <div class="row">
+            <div class="col-md-6">
+        
+                <h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span>Créer un compte</h1>
+                {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+                   
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Adresse Email' ) }}
+                        {{ form_errors(form.email) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.username, 'Pseudo' ) }}
+                        {{ form_errors(form.username) }}
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="fos_user_registration_form_plainPassword_first" class="required">{{ 'form.password'|trans }}</label>
+                        <input type="password" class="form-control" id="fos_user_registration_form_plainPassword_first" name="fos_user_registration_form[plainPassword][first]" required="required" />
+                    </div>
+                    <div class="form-group">
+                        <label for="fos_user_registration_form_plainPassword_second" class="required">{{ 'form.password_confirmation'|trans }}</label>
+                        <input type="password" class="form-control" id="fos_user_registration_form_plainPassword_second" name="fos_user_registration_form[plainPassword][second]" required="required" />
+                    </div>
+
+                    <div class="container-fluid text-center">
+                        <input class="btn btn-primary" type="submit"  value="submit" />
+                    </div>
+
+                {% do form.plainPassword.setRendered %}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

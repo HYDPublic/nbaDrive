@@ -1,0 +1,15 @@
+{{ form_start(form) }} 
+	<tr>
+		<td>
+			<div class="input-group">
+				<input class="form-control input-lg" placeholder="Message ..." type="text" id="talk_add_message" name="talk_add[message]" required="required" />
+				<span class="input-group-btn">
+					<button class="btn btn-primary btn-lg"  type="submit" id="talk_add_save" name="talk_add[save]">
+						<i class="glyphicon glyphicon-send"></i>
+					</button>
+				</span>
+			</div>
+		</td>
+	</tr>
+	{% do form.message.setRendered %}
+{{ form_end(form) }}

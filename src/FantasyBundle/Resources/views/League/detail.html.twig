@@ -1,0 +1,210 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+<section class="container ligues">
+	<div class="row">
+		<div class="col-md-7">
+			<h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> {{ league.name }}</h1>
+{#
+			<table class="table table-striped">
+					{% set i = 0 %}
+	                {% for member in league.users %}
+	                	{% set i = i+1 %}
+	                    <tr>
+	                        <td>{{ i }}</td>
+	                        <td>
+	                        	{% if i < 4 %}
+	                        			<i class="fa fa-trophy" aria-hidden="true"></i> 
+	                        	{% endif %}
+	                        	{{ member.username }}
+	                        </td>
+	                        <td>{% if classement[member.id] is defined %}{{ classement[member.id] }}{% else %} 0 {% endif %} points</td>
+	                        <td class="text-right"><a href="#">profil<a> | <a href="#">comparer</a></td>
+	                    </tr>
+	                {% endfor %}
+
+	        </table>
+#}
+
+			<table class="table table-striped">
+
+					{% set i = 0 %}
+					{% set pos = 0 %}
+					{% set currentPts = 0 %}
+	                
+	                {% for cl in classement %}
+	                	{% set i = i+1 %}
+	                	{% if currentPts != cl.points %}
+							{% set pos = i %}
+							{% set currentPts = cl.points %}
+	                	{% endif %}
+
+	                    <tr>
+	                        <td>{{ pos }}</td>
+	                        <td>
+	                        	{% if pos < 4 %}
+	                        			<i class="fa fa-trophy" aria-hidden="true"></i> 
+	                        	{% endif %}
+	                        	{{ cl.user.username }}
+	                        </td>
+	                        <td>{{ cl.points }} points</td>
+	                        <td class="text-right"><a href="{{ path('fantasy_core_compare', {'u': cl.user.username}) }}">comparer</a></td>
+	                    </tr>
+	                {% endfor %}
+
+	        </table>
+
+	        <h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Info ligue</h1>
+	        <div class="row">
+	        	<div class="col-xs-12 col-md-9">
+	        		<table class="table">
+	        			
+							<td>Status</td>
+							<td>{% if league.private == 1 %} privé {% else %} public {% endif %}</td>
+						</tr>
+						<tr>
+							<td>Propriétaire</td>
+							<td>{{ league.owner.username }}</td>
+						</tr>
+						{% if league.owner.id == app.user.id %}
+							<tr>
+								<td><span class="glyphicon glyphicon-exclamation-sign text-admin" aria-hidden="true"></span> Ligue ID</td>
+								<td>
+									{# {{ url('fantasy_league_join_url', {'hash' : league.uniqueId}) }} #}
+									<span id="cpyURL" data-clipboard-url="{{ url('fantasy_league_join_url') }}" data-clipboard-uid="{{ league.uniqueId }}" data-toggle="tooltip" data-placement="top" title="Enregistrement dans votre presse-papier d'un lien que vous pouvez partager avec vos amis afin qu'ils rejoignent votre ligue très facilement.">{{ league.uniqueId }}</span> <span id="resetID" class="glyphicon glyphicon-refresh text-admin pull-right" aria-hidden="true"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><span class="glyphicon glyphicon-exclamation-sign text-admin" aria-hidden="true"></span> <a href="{{ path('fantasy_league_edit', {'id': league.id}) }}" class="text-admin">Modifier les paramètres de la ligue</a></td>
+							</tr>
+							<tr>
+								<td colspan="2"><span class="glyphicon glyphicon-exclamation-sign text-admin" aria-hidden="true"></span> <a href="{{ path('fantasy_league_edit', {'id': league.id}) }}" class="text-admin">Virer des participants</a></td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="2"><a href="{{ path('fantasy_league_quit', {'idl': league.id}) }}">Quitter cette ligue</a></td>
+							</tr>
+						{% endif %}
+						
+
+					</table>
+	        	</div>
+	        	<div class="col-xs-12 col-md-3">
+	        		<table class="table">
+	        			{% for stat,val in league.pointsPerStats %}
+							<tr>
+								<td class="text-capitalize">{{ stat }}</td>
+								<td>{{ val }}</td>
+							</tr>
+	        			{% endfor %}
+					</table>
+	        	</div>
+	        </div>
+			
+	
+		</div>
+		<div class="col-md-4 col-md-offset-1">
+				<h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Trash Talk</h1>
+				<table class="table" id="talkslist">
+					{{ render(controller("FantasyBundle:League:talkform", {'id':league.id})) }}
+					
+					<tr>
+			       		<td id="updateTalk">
+			       			MIS A JOUR DU FIL TRASHTALK
+			       		</td>
+			       	</tr>
+				</table>
+				<table class="class talkcontent">
+				   	{{ render(controller("FantasyBundle:League:talk", {'id':league.id})) }}
+				</table>
+		</div>
+	</div>
+</section>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/clipboard.min.js') }}"></script>
+<script>
+	(function( $ ) {
+
+		new Clipboard('#cpyURL', {
+			text: function(trigger){
+				return trigger.getAttribute('data-clipboard-url')+'/'+trigger.getAttribute('data-clipboard-uid');
+			}
+		});
+
+		{#
+		$('#updateTalk').on('click', function(){
+			$.ajax({
+				url : '{{ path('fantasy_ajax_league_talks', {'id': league.id}) }}',
+				success: function(data){
+					$.each(data, function(k,v){
+						console.log(v['created']);
+						console.log('<tr id="trashtalk_'+v['id']+'" class="pf-message"><td>a | a<p>'+v['message']+'</p></td></tr>');
+					});
+				}
+			})
+		});
+		#}
+
+		// On initialise le popover
+  		$('[data-toggle="tooltip"]').tooltip()
+
+
+		function updateTalk()
+		{
+			console.log('updating:');
+			$('.pf-message').remove();
+			$.ajax({
+				url : '{{ path('fantasy_ajax_league_talks', {'id': league.id}) }}',
+				success: function(data){
+					$('.talkcontent').append(data);
+				}
+			});
+		}
+
+		$('#updateTalk').on('click', function(){
+			updateTalk();
+		});
+
+
+		$('form[name="talk_add"]').submit(function(e){
+			var data = {};
+			data['msg'] = $('#talk_add_message').val();
+			e.preventDefault();
+			
+			$.ajax({
+				url: '{{ path('fantasy_league_talk', {'id': league.id}) }}',
+				type: 'POST',
+				data: data,
+				success: function(dataReturn){
+					updateTalk();
+					$('#talk_add_message').val('');
+		        },
+			});
+			
+		});
+
+		$('#resetID').on('click', function(){
+
+			if( confirm('Voulez vous vraiment re-inialiser l\'ID de votre ligue ? Le seul interet de cet identifiant est de facilité vos amis a rejoindre votre ligue pour la premiere fois.' ) ) {
+				
+				$.ajax({
+					url: '{{ path('fantasy_league_reset_uniqueid', {'id': league.id}) }}',
+					type: 'POST',
+					success: function(dataReturn){
+						$('#cpyURL').text(dataReturn);
+						$('#cpyURL').attr('data-clipboard-uid', dataReturn);
+					},
+				});
+
+			}
+
+		});
+
+	}( jQuery ));
+</script>
+{% endblock %}

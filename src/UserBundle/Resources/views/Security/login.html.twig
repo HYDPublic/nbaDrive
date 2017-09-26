@@ -1,0 +1,45 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <section class="container">
+        <div class="row">
+            <div class="col-md-6">
+        
+                <h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span>Se connecter</h1>
+                
+                <form action="{{ path("fos_user_security_check") }}" method="post">
+
+                    {% if csrf_token %}
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                    {% endif %}
+
+                        <div class="form-group">
+                            <label for="username" class="required">Login/Pseudo</label>
+                            <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" placeholder="{{ 'security.login.username'|trans }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="required">Password</label>
+                            <input type="password" id="password" name="_password" class="form-control" placeholder="Password" required>
+                            <div class="help-block text-right"><a href="">Forget the password ?</a></div>
+                        </div>
+                        
+                        <div class="checkbox">
+                            <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+                            <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+                        </div>
+
+
+                         <div class="container-fluid text-center">
+                            <input class="btn btn-primary" type="submit"  value="{{ 'security.login.submit'|trans }}" />
+                        </div>
+                        
+                 </form>
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

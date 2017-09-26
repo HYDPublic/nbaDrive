@@ -1,0 +1,15 @@
+   {% for talk in talks %}
+      	<tr id="trashtalk_{{ talk.id }}" class="pf-message">
+      		<td>
+      			<strong>
+   	   			{% if app.user.id == talk.user.id %}
+   					<span class="text-primary">{{ talk.user.username }}</span>
+   				{% else %}
+   					{{ talk.user.username }}
+   	   			{% endif %}
+      			</strong>
+      			 | <span class="text-gray">{{ talk.created|date('d M Y, H:i') }}</span>
+   			<p>{{ talk.message }} </p>
+      		</td>
+      	</tr>
+   {% endfor %}

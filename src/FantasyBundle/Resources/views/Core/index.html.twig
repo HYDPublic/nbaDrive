@@ -1,0 +1,118 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {# MON PROFIL #}
+    <section class="container profil">
+        <div class="row vertical-align">
+            <div class="col-xs-2"><img src="{{ asset('pics/teams/'~user.favoriteTeam.logo) }}" alt="Mon équipe de reve" class="img-circle profil-avatar"></div>
+            <div class="col-xs-4">
+                <ul class="list-unstyled">
+                    <li class="profil-ul-pseudo">{{ user.username }}</li>
+                    <li class="profil-ul-pts">Score : {{ stat.total }}</li>
+                    <li>{#<img src="assets/pics/eu.png" alt="">#}Classement mondial : {{ positions }} ieme {# | <img src="assets/pics/fr.png" alt=""> 3ieme | facorite team : 11ieme #} </li>
+                </ul>
+            </div>
+
+            <ul class="list-unstyled col-xs-2 text-center profil-col">
+                <li class="profil-ul-pts text-primary">{{ stat.points }}</li>
+                <li>points marqués</li>
+                {# <li>top 5%</li> #}
+            </ul>
+
+            <ul class="list-unstyled col-xs-2 text-center profil-col">
+                <li class="profil-ul-pts text-primary">{{ stat.rebonds }}</li>
+                <li>Rebonds</li>
+                {# <li>top 45%</li> #}
+            </ul>
+
+            <ul class="list-unstyled col-xs-2 text-center profil-col">
+                <li class="profil-ul-pts text-primary">{{ stat.assists }}</li>
+                <li>Passes décisives</li>
+                {# <li>top 12%</li> #}
+            </ul>
+
+        </div>
+    </section>
+    {# /MON PROFIL #}
+
+    {# mes picks #}
+    <section class="container mypicks">
+        <h1> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Ma sélection</h1>
+        <div class="row">
+            <table class="table table-striped col-xs-12">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Mon choix</th>
+                        <th>Meilleur performance</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for game in dates %}
+                        {% set gamedate = game.day.date|date('d-m-Y') %}
+
+                         <tr>
+                            <td>{{ gamedate }}</td>
+                            
+                            {% if mypicks[gamedate] is defined %}
+                                <td>{{ mypicks[gamedate].player.name }} <small class="text-primary">\{{ mypicks[gamedate].player.team.name }}</small></td>
+                            {% else %}
+                                <td>-</td>
+                            {% endif %}
+                            
+                            {# SI LE MATCH A DEJA ETE JOUE ! #}
+                            {% if mypicks[gamedate].player.name is defined and bestpicks[gamedate] is defined %}
+                                <td>{{ bestpicks[gamedate].player.name }} <small class="text-primary">\{{ bestpicks[gamedate].player.team.name }}</small> \{{ bestpicks[gamedate].points }} </td>
+                                <td>{{ mypoints[mypicks[gamedate].player.id].points }}</td>                            
+                            {% elseif "now"|date('YmdHi', "America/New_York") > game.firstDate|date('YmdHi') %}
+                                <td colspan="2" class="text-center">
+                                    a venir ...
+                                </td>
+                            {% else %}
+                                <td colspan="2" class="text-center">
+                                    <a href="{{ path('fantasy_core_pickday', {'day': game.day.date|date('d-m-Y')} ) }}">Choisir un joueur</a>
+                                </td>
+                            {% endif %}
+
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+            {# pagination #}
+                    {% if nbPages != 1 %}
+                        <div class="row">
+                            <div class="col-xs-12 text-center">
+                                <ul class="pagination">
+                                    <li{% if page == 1 %} class="disabled" {% endif %}>
+                                        <a href="{{ path('fantasy_core_pick', {'page': page-1}) }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    {% for p in range(1, nbPages) %}
+                                        <li{% if p == page %} class="active"{% endif %}>
+                                            <a href="{{ path('fantasy_core_pick', {'page': p}) }}">{{ p }}</a>
+                                        </li>
+                                    {% endfor %}
+
+                                    <li{% if page == nbPages %} class="disabled" {% endif %}>
+                                        <a href="{{ path('fantasy_core_pick', {'page': page+1}) }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {# /pagination #}
+
+
+        </div>
+    </section>
+    {# /mes picks #}
+
+{% endblock %}

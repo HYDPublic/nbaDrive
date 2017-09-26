@@ -1,0 +1,53 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+	<section class="container-fluid home">
+		<div class="container">
+			
+			<span class="home-header hhb">NBA PF</span><br/>
+			<span class="home-header hhs">NBA Playoff Fantasy & more</span>
+
+		</div>
+	</section>
+
+
+	<section class="container">
+		<div class="row text-uppercase">
+
+			<div class="counter col-xs-6 col-xs-offset-3">
+				<div class="row">
+					<p class="col-xs-10 col-xs-offset-1">
+						<span class="counter-title">Playoff 2016-2017</span><br/>
+						<span class="text-primary">Premier match le 15 avril 2017</span> <span class="hidden" id="finished">{{ attribute(countdown, 'invert') }}</span><br/>
+					</p>
+					<div class="col-xs-2 col-xs-offset-1 time">
+						<span id="months">{{ attribute(countdown,'m') }}</span><br/>
+						mois
+					</div>
+					<div class="col-xs-2 time">
+						<span id="days">{{ attribute(countdown,'d') }}</span><br/>
+						jours
+					</div>
+					<div class="col-xs-2 time">
+						<span id="hours">{{ attribute(countdown,'h') }}</span><br/>
+						heures
+					</div>
+					<div class="col-xs-2 time">
+						<span id="minutes">{{ attribute(countdown,'i') }}</span><br/>
+						minutes
+					</div>
+					<div class="col-xs-2 time">
+						<span id="seconds">{{ attribute(countdown,'s') }}</span><br/>
+						secondes
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/countdown.js') }}"></script>
+{% endblock %}

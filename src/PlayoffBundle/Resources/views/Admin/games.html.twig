@@ -1,0 +1,72 @@
+{% extends "CoreBundle::admin_layout.html.twig" %}
+
+{% block body %}
+
+<div class="container-fluid">
+                
+    <header class="row title">
+        <div class="col-lg-12">
+            <i class="fa fa-users" aria-hidden="true"></i> Games ! 
+        </div>   
+    </header>
+    
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="box">
+                <div class="box-header">All teams</div>
+                <div class="box-body">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>date</th>
+                                <th>Round</th>
+                                <th>Team vs @Team</th>
+                                <th>Winner</th>
+                                <th class="text-center">#NBC ID</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr class="clickrow" data-url="{{ path('admin_playoff_game_add') }}">
+                                <td colspan="5">Create new game</td>
+                            </tr>
+
+                            {% for game in games %}
+                                
+                                <tr class="clickrow" data-url="{{ path('admin_playoff_game_edit', {'id':game.id}) }}">
+                                    <td>{{ game.id }}</td>
+                                    <td>{{ game.date|date('Y-m-d H:i') }}</td>
+                                    <td>#{{ game.round }}#</td>
+                                    <td><strong>{{ game.teamExt.name }} @ {{ game.teamDom.name }}</strong></td>
+                                    <td>
+                                        {% if game.winner is null %}
+                                            -
+                                        {% else %}
+                                            {{ game.winner.name }}
+                                        {% endif %}
+                                        
+                                    </td>
+                                    <td class="text-center">{{ game.aid }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ path('admin_playoff_statsheet_fetch', {'id':game.aid}) }}" class="btn btn-default btn-sm">Fetch result</a>
+                                        <a href="{{ path('admin_playoff_game_delete', {'id':game.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
+                                </tr>
+                                
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

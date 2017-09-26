@@ -1,0 +1,19 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <section class="container">
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <p>
+                    {{ 'registration.confirmed'|trans({'%username%': user.username}) }}
+                </p>
+                {% if targetUrl %}
+                    <p><a href="{{ targetUrl }}">{{ 'registration.back'|trans }}</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

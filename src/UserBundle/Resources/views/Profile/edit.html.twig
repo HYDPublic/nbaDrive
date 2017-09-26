@@ -1,0 +1,58 @@
+{% extends "CoreBundle::layout.html.twig" %}
+
+{% block body %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+    <section class="container">
+        <div class="row">
+            <h1 class="col-xs-12"> <span class="glyphicon glyphicon-fire text-primary" aria-hidden="true"></span> Modifier profil</h1>
+            <div class="col-xs-12">
+                
+
+                {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+                    
+                    <div class="form-group">
+                        {{ form_label(form.username, 'Pseudo' ) }}
+                        {{ form_errors(form.username) }}
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.email, 'E-mail' ) }}
+                        {{ form_errors(form.email) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            {{ form_label(form.favoriteTeam, 'Equipe favorite' ) }}
+                            {{ form_errors(form.favoriteTeam) }}
+                            {{ form_widget(form.favoriteTeam, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{ form_label(form.country, 'Nationalité' ) }}
+                            {{ form_errors(form.country) }}
+                            {{ form_widget(form.country, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{ form_label(form.locale, 'Langue' ) }}
+                            {{ form_errors(form.locale) }}
+                            {{ form_widget(form.locale, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.current_password, 'Votre password' ) }}
+                        {{ form_errors(form.current_password) }}
+                        {{ form_widget(form.current_password, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    
+                    <div class="col-xs-12 text-center">
+                        <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.submit'|trans }}" />  
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
